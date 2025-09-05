@@ -1,34 +1,24 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Container, Grid } from '@mui/material'
+import CustomButton from './components/Button'
+import LabeledInput from './components/LabeledInput'
+import { useUsers } from './hooks/useUsers';
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const { data: users, isLoading, error } = useUsers();
+  console.log(users)
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Grid container columns={2} width="100%" p={2} columnGap={2}>
+      <Grid item sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 2 }}>
+        <LabeledInput label="Nome" />
+        <LabeledInput label="Telefone" />
+        <LabeledInput label="E-mail" />
+        <CustomButton label="salvar" />
+        <CustomButton color="secondary" label="limpar" />
+      </Grid>
+      <Grid>
+        {/* {users.map((user) =>)} */}
+      </Grid>
+    </Grid>
   )
 }
 
