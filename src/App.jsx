@@ -8,10 +8,12 @@ import { Edit } from '@mui/icons-material';
 import EditDrawer from './components/EditDrawer';
 
 function App() {
-  const { data: users, isLoading, create, destroy } = useUsers();
+  const { data: users, isLoading, create, destroy, getError, clearErrors } = useUsers();
   const [formData, setFormData] = useState({ name: "", phone: "", email: "" })
 
   const handleChange = (evt) => {
+    clearErrors();
+
     const value = evt.target.value
     const fieldName = evt.target.name
     setFormData(currentData => ({ ...currentData, [fieldName]: value }))
@@ -22,19 +24,24 @@ function App() {
   }
 
   const onClear = () => {
+    clearErrors();
     setFormData({ name: "", phone: "", email: "" })
   }
 
+  const nameErrorMsg = getError("name");
+  const phoneErrorMsg = getError("phone");
+  const emailErrorMsg = getError("email");
+
   return (
     <Grid container spacing={2} p={2} minHeight='100vh' width="100%" wrap='nowrap'>
-      <Grid size={3} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <LabeledInput onChange={handleChange} value={formData.name} name="name" label="Nome" />
-        <LabeledInput inputProps={{ maxLength: 11 }} onChange={handleChange} value={formData.phone} name="phone" label="Telefone" />
-        <LabeledInput onChange={handleChange} value={formData.email} name="email" label="E-mail" />
+      <Grid size={4} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        <LabeledInput error={!!nameErrorMsg} helperText={nameErrorMsg} onChange={handleChange} value={formData.name} name="name" label="Nome" />
+        <LabeledInput error={!!phoneErrorMsg} helperText={phoneErrorMsg} onChange={handleChange} value={formData.phone} name="phone" label="Telefone" />
+        <LabeledInput error={!!emailErrorMsg} helperText={emailErrorMsg} onChange={handleChange} value={formData.email} name="email" label="E-mail" />
         <CustomButton label="salvar" onClick={onClickSave} />
         <CustomButton color="secondary" label="limpar" onClick={onClear} />
       </Grid>
-      <Grid size={9}>
+      <Grid size={8}>
         <TableContainer component={Paper}>
           <Table stickyHeader aria-label="tabela de usuários">
             <TableHead>

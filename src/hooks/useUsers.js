@@ -4,14 +4,14 @@ import { userApi } from "../api/userApi";
 export function useUsers() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [apiError, setApiError] = useState(null);
 
     useEffect(() => {
         let mounted = true;
         setLoading(true);
         userApi.getAll()
             .then(users => { if (mounted) setData(users.data) })
-            .catch(err => { if (mounted) setError(err) })
+            .catch(err => { if (mounted) setApiError(err) })
             .finally(() => { if (mounted) setLoading(false) });
         return () => { mounted = false };
     }, []);
@@ -20,7 +20,7 @@ export function useUsers() {
         const result = await userApi.create(user)
         if (result.error) {
             console.error("Erro ao criar usuário:", result.error);
-            setError(result.error);
+            setApiError(result.error);
             return;
         }
 
@@ -33,7 +33,7 @@ export function useUsers() {
 
         if (result.error) {
             console.error("Erro ao criar usuário:", result.error);
-            setError(result.error);
+            setApiError(result.error);
             return;
         }
 
@@ -47,7 +47,7 @@ export function useUsers() {
 
         if (result.error) {
             console.error("Erro ao atualizar usuário:", result.error);
-            setError(result.error);
+            setApiError(result.error);
             return;
         }
 
@@ -57,5 +57,17 @@ export function useUsers() {
         ));
     }
 
-    return { data, loading, error, create, destroy, update };
+    const clearErrors = () => {
+        setApiError(null);
+    };
+
+    const getError = (fieldName) => {
+        if (!apiError || !apiError.erros || !Array.isArray(apiError.erros)) {
+            return undefined;
+        }
+        const fieldError = apiError.erros.find(err => err.field === fieldName);
+        return fieldError ? fieldError.message : undefined;
+    };
+
+    return { data, loading, apiError, create, destroy, update, getError, clearErrors };
 }

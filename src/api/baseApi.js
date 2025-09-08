@@ -42,6 +42,7 @@ async function baseApi(endpoint, { body, method, ...customOptions } = {}) {
         const error = {
             status: response.status,
             message: errorData.message || response.statusText,
+            erros: errorData.errors
         };
         return Promise.reject(error);
     }
