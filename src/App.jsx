@@ -1,11 +1,9 @@
-import { CircularProgress, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-import CustomButton from './components/Button'
-import LabeledInput from './components/LabeledInput'
+import { CircularProgress, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useUsers } from './hooks/useUsers';
 import React, { useState } from 'react';
-import { Edit } from '@mui/icons-material';
 import EditDrawer from './components/EditDrawer';
+import UserForm from './components/UserForm';
 
 function App() {
   const { data: users, isLoading, create, destroy, getError, clearErrors } = useUsers();
@@ -28,18 +26,42 @@ function App() {
     setFormData({ name: "", phone: "", email: "" })
   }
 
-  const nameErrorMsg = getError("name");
-  const phoneErrorMsg = getError("phone");
-  const emailErrorMsg = getError("email");
+  const renderContent = () => {
+    if (users.length === 0) return (<TableRow>
+      <TableCell>
+        <Typography>Sem dados</Typography>
+      </TableCell>
+    </TableRow>
+    )
+
+    return users?.map((user) => (
+      <TableRow key={user._id || user.email}>
+        <TableCell>{user.name}</TableCell>
+        <TableCell>{user.email}</TableCell>
+        <TableCell>{user.phone}</TableCell>
+        <TableCell align="right">
+          <Grid>
+            <IconButton onClick={() => destroy(user._id)}>
+              <DeleteIcon color="error" />
+            </IconButton>
+
+            <EditDrawer user={user} />
+          </Grid>
+        </TableCell>
+      </TableRow>
+    ))
+  }
 
   return (
     <Grid container spacing={2} p={2} minHeight='100vh' width="100%" wrap='nowrap'>
       <Grid size={4} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <LabeledInput error={!!nameErrorMsg} helperText={nameErrorMsg} onChange={handleChange} value={formData.name} name="name" label="Nome" />
-        <LabeledInput error={!!phoneErrorMsg} helperText={phoneErrorMsg} onChange={handleChange} value={formData.phone} name="phone" label="Telefone" />
-        <LabeledInput error={!!emailErrorMsg} helperText={emailErrorMsg} onChange={handleChange} value={formData.email} name="email" label="E-mail" />
-        <CustomButton label="salvar" onClick={onClickSave} />
-        <CustomButton color="secondary" label="limpar" onClick={onClear} />
+        <UserForm
+          formData={formData}
+          handleChange={handleChange}
+          getError={getError}
+          onClear={onClear}
+          onSave={onClickSave}
+        />
       </Grid>
       <Grid size={8}>
         <TableContainer component={Paper}>
@@ -58,22 +80,7 @@ function App() {
                   <TableCell colSpan={4} align="center">
                     <CircularProgress />
                   </TableCell>
-                </TableRow> : users?.map((user) => (
-                  <TableRow key={user._id || user.email}>
-                    <TableCell>{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.phone}</TableCell>
-                    <TableCell align="right">
-                      <Grid>
-                        <IconButton onClick={() => destroy(user._id)}>
-                          <DeleteIcon color="error" />
-                        </IconButton>
-
-                        <EditDrawer user={user} />
-                      </Grid>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                </TableRow> : renderContent()}
             </TableBody>
           </Table>
         </TableContainer>

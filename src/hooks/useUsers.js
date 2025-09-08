@@ -22,6 +22,7 @@ export function useUsers() {
         const result = await userApi.create(user)
         if (result.error) {
             console.error("Erro ao criar usuário:", result.error);
+            showSnackbar(result.error.message, "error")
             setApiError(result.error);
             return;
         }
@@ -48,6 +49,7 @@ export function useUsers() {
         const result = await userApi.update(user)
 
         if (result.error) {
+            showSnackbar(result.error.message, "error")
             console.error("Erro ao atualizar usuário:", result.error);
             setApiError(result.error);
             return;
