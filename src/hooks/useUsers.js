@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { userApi } from "../api/userApi";
+import { useSnackbar } from "./useSnackBar";
 
 export function useUsers() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [apiError, setApiError] = useState(null);
+    const { showSnackbar } = useSnackbar();
 
     useEffect(() => {
         let mounted = true;
@@ -23,7 +25,7 @@ export function useUsers() {
             setApiError(result.error);
             return;
         }
-
+        showSnackbar("Usuário criado com sucesso!", "success")
         const newUser = result.data
         setData(currentUsers => [...currentUsers, newUser])
     }
@@ -36,7 +38,7 @@ export function useUsers() {
             setApiError(result.error);
             return;
         }
-
+        showSnackbar("Usuário deletado com sucesso!", "success")
         setData(currentUsers =>
             currentUsers.filter(user => user._id !== id)
         );
@@ -51,6 +53,7 @@ export function useUsers() {
             return;
         }
 
+        showSnackbar("Usuário atualizado com sucesso!", "success")
         const updatedUser = result.data;
         setData(currentUsers => currentUsers.map(oldUser =>
             oldUser._id === updatedUser._id ? updatedUser : oldUser

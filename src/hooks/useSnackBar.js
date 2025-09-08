@@ -1,14 +1,12 @@
-// import { Snackbar } from "@mui/material"
+import { useContext } from 'react';
+import { SnackbarContext } from '../contexts/SnackbarContext';
 
-// const useSnackBar = ({ type, message }) => {
-//     return (
-//         <Snackbar
-//             sx={{ bgcolor: "success" }}
-//             open={open}
-//             autoHideDuration={5000}
-//             message={message}
-//         />
-//     )
-// }
+export const useSnackbar = () => {
+    const context = useContext(SnackbarContext); 
 
-// export default useSnackBar
+    if (!context) {
+        throw new Error('useSnackbar deve ser usado dentro de um SnackbarProvider');
+    }
+
+    return context; 
+};
